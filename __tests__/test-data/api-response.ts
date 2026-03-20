@@ -1,83 +1,6 @@
-import { ResponseListOrganizations, ResponseListProducts, ResponseListReleases, ResponseListRepositories } from "../../src/service/request-service";
+import { GithubMetricsResponse } from "../../src/github";
+import { ResponseListOrganizations, ResponseListProducts, ResponseListReleases, ResponseListRepositories, ResponseCalculateMathModel } from "../../src/service/request-service";
 import { MetricsResponseAPI } from "../../src/sonarqube";
-
-export const bodyCalculateCharacteristicsResponse = [
-  {
-    id: 1,
-    key: 'reliability',
-    name: 'Reliability',
-    description: null,
-    latest: {
-      id: 5,
-      characteristic_id: 1,
-      value: 0.9254618113429579,
-      created_at: '2023-06-20T08:03:55.249528-03:00',
-    },
-  },
-];
-
-export const bodyCalculateSubcharacteristicsResponse = [
-  {
-    "id": 1,
-    "key": "reliability",
-    "name": "Reliability",
-    "description": null,
-    "latest": {
-      "id": 5,
-      "subcharacteristic_id": 1,
-      "value": 0.7356028917913602,
-      "created_at": "2023-06-20T08:03:55.249528-03:00"
-    }
-  },
-]
-
-export const bodyCalculateTSQMIResponse = {
-  id: 2,
-  value: 0.8359399436161667,
-  created_at: '2023-06-20T08:04:24.045715-03:00',
-};
-
-export const bodyCalculateMeasuresResponse = [
-  {
-    "id": 1,
-    "key": "passed_tests",
-    "name": "Passed Tests",
-    "description": null,
-    "latest": {
-      "id": 31,
-      "measure_id": 1,
-      "value": 1.0,
-      "created_at": "2023-06-20T08:00:40.248839-03:00"
-    }
-  },
-  {
-    "id": 2,
-    "key": "test_builds",
-    "name": "Test Builds",
-    "description": null,
-    "latest": {
-      "id": 32,
-      "measure_id": 2,
-      "value": 0.9999999129629629,
-      "created_at": "2023-06-20T08:00:40.248839-03:00"
-    }
-  },
-]
-
-export const bodyInsertMetricsResponse = [
-  {
-    "id": 396,
-    "metric_id": 104,
-    "value": 28.0,
-    "created_at": "2023-06-20T08:00:37.481456-03:00"
-  },
-  {
-    "id": 397,
-    "metric_id": 102,
-    "value": 0.0,
-    "created_at": "2023-06-20T08:00:37.481483-03:00"
-  },
-]
 
 export const bodyListOrganizationsResponse: ResponseListOrganizations = {
   "count": 2,
@@ -111,6 +34,77 @@ export const bodyListOrganizationsResponse: ResponseListOrganizations = {
     }
   ]
 }
+
+export const calculatedMathModelResponse = {
+  metrics: [
+    {
+      id: 93586,
+      metric_id: 1510,
+      value: 2.0,
+      created_at: "2024-09-10T19:51:05.855496-03:00"
+    },
+    {
+      id: 93587,
+      metric_id: 2333,
+      value: 1.0,
+      created_at: "2024-09-10T19:51:05.855538-03:00"
+    },
+    {
+      id: 93591,
+      metric_id: 104,
+      value: 241.0,
+      created_at: "2024-09-10T19:51:05.855658-03:00"
+    },
+    {
+      id: 93594,
+      metric_id: 105,
+      value: 33.0,
+      created_at: "2024-09-10T19:51:05.855718-03:00"
+    },
+    {
+      id: 93601,
+      metric_id: 10,
+      value: 5.7,
+      created_at: "2024-09-10T19:51:05.855855-03:00"
+    }
+  ],
+  measures: [
+    {
+      id: 3035,
+      measure_id: 3,
+      value: 1.0,
+      created_at: "2024-09-10T19:51:06.379157-03:00"
+    },
+    {
+      id: 3036,
+      measure_id: 4,
+      value: 0.85,
+      created_at: "2024-09-10T19:51:06.379175-03:00"
+    }
+  ],
+  subcharacteristics: [
+    {
+      id: 1013,
+      subcharacteristic_id: 1,
+      value: 0.7633637436759544,
+      created_at: "2024-09-10T19:51:06.440637-03:00"
+    }
+  ],
+  characteristics: [
+    {
+      id: 1031,
+      characteristic_id: 1,
+      value: 0.41637162119267096,
+      created_at: "2024-09-10T19:51:06.468321-03:00"
+    }
+  ],
+  tsqmi: {
+    id: 497,
+    value: 0.5004488019824581,
+    created_at: "2024-09-10T19:51:06.490053-03:00"
+  }
+};
+
 
 export const bodyListProductsResponse: ResponseListProducts = {
   "count": 2,
@@ -269,6 +263,31 @@ export const bodySonarCloudResponseMetrics: MetricsResponseAPI = {
     }]
 }
 
+export const githubMetricsAPIResponse: GithubMetricsResponse = {
+  metrics: [
+    {
+      name: 'ci_feedback_time',
+      value: 350,
+      path: 'owner/repo'
+    }
+  ]
+}
+
+export const githubMetricsAPIThroughput: GithubMetricsResponse = {
+  metrics: [
+    {
+      name: 'total_issues', 
+      value: 2, 
+      path: "testOwner/testRepo"
+    }, 
+    {
+      name: 'resolved_issues', 
+      value: 1, 
+      path: "testOwner/testRepo"
+    }
+  ]
+}
+
 export const bodyListReleaseResponse: ResponseListReleases[] = [
   {
       "id": 1,
@@ -278,3 +297,209 @@ export const bodyListReleaseResponse: ResponseListReleases[] = [
       "end_at": "2023-06-26T00:00:00-03:00"
   }
 ]
+
+export const bodyCalculateMathModelRequest = {
+  "sonarqube": 
+      {
+"paging": {
+  "pageIndex": 1,
+  "pageSize": 500,
+  "total": 18
+},
+"baseComponent": {
+  "id": "AZCF-CHfd2CtBNt0JSSN",
+  "key": "fga-eps-mds_2024.1-MeasureSoftGram-Action",
+  "name": "2024.1-MeasureSoftGram-Action",
+  "qualifier": "TRK",
+  "measures": [
+    { "metric": "comment_lines_density", "value": "0.8", "bestValue": false },
+    { "metric": "complexity", "value": "50" },
+    { "metric": "coverage", "value": "93.0", "bestValue": false },
+    { "metric": "duplicated_lines_density", "value": "0.0", "bestValue": true },
+    { "metric": "files", "value": "6" },
+    { "metric": "functions", "value": "28" },
+    { "metric": "ncloc", "value": "498" },
+    { "metric": "reliability_rating", "value": "1.0", "bestValue": true },
+    { "metric": "security_rating", "value": "1.0", "bestValue": true },
+    { "metric": "test_errors", "value": "0", "bestValue": true },
+    { "metric": "test_execution_time", "value": "241" },
+    { "metric": "test_failures", "value": "0", "bestValue": true },
+    { "metric": "test_success_density", "value": "100.0", "bestValue": true },
+    { "metric": "tests", "value": "33" }
+  ]
+},
+"components": [
+  {
+    "id": "AZCh9dge5bzIcQ7rq-3c",
+    "key": "fga-eps-mds_2024.1-MeasureSoftGram-Action:__tests__",
+    "name": "__tests__",
+    "qualifier": "DIR",
+    "path": "__tests__",
+    "measures": [
+      { "metric": "reliability_rating", "value": "1.0", "bestValue": true },
+      { "metric": "security_rating", "value": "1.0", "bestValue": true },
+      { "metric": "test_errors", "value": "0", "bestValue": true },
+      { "metric": "test_execution_time", "value": "241" },
+      { "metric": "test_failures", "value": "0", "bestValue": true },
+      { "metric": "test_success_density", "value": "100.0", "bestValue": true },
+      { "metric": "tests", "value": "33" }
+    ]
+  },
+  {
+    "id": "AZCh9dge5bzIcQ7rq-3X",
+    "key": "fga-eps-mds_2024.1-MeasureSoftGram-Action:__tests__/test-data/api-response.ts",
+    "name": "api-response.ts",
+    "qualifier": "UTS",
+    "path": "__tests__/test-data/api-response.ts",
+    "language": "ts",
+    "measures": [
+      { "metric": "reliability_rating", "value": "1.0", "bestValue": true },
+      { "metric": "security_rating", "value": "1.0", "bestValue": true },
+      { "metric": "duplicated_lines_density", "value": "0.0", "bestValue": true },
+      { "metric": "test_failures", "value": "0", "bestValue": true },
+      { "metric": "test_success_density", "value": "100.0", "bestValue": true },
+      { "metric": "test_errors", "value": "0", "bestValue": true }
+    ]
+  }, 
+      {
+    "id": "AZCh9dge5bzIcQ7rq-3L",
+    "key": "fga-eps-mds_2024.1-MeasureSoftGram-Action:src/github/github-comment.ts",
+    "name": "github-comment.ts",
+    "qualifier": "FIL",
+    "path": "src/github/github-comment.ts",
+    "language": "ts",
+    "measures": [
+      {
+        "metric": "comment_lines_density",
+        "value": "5.7",
+        "bestValue": false
+      },
+      {
+        "metric": "complexity",
+        "value": "6"
+      },
+      {
+        "metric": "coverage",
+        "value": "100.0",
+        "bestValue": true
+      },
+      {
+        "metric": "files",
+        "value": "1"
+      },
+      {
+        "metric": "functions",
+        "value": "4"
+      },
+      {
+        "metric": "ncloc",
+        "value": "50"
+      },
+      {
+        "metric": "reliability_rating",
+        "value": "1.0",
+        "bestValue": true
+      },
+      {
+        "metric": "security_rating",
+        "value": "1.0",
+        "bestValue": true
+      },
+      {
+        "metric": "duplicated_lines_density",
+        "value": "0.0",
+        "bestValue": true
+      },
+      {
+        "metric": "test_failures",
+        "value": "0",
+        "bestValue": true
+      },
+      {
+        "metric": "test_success_density",
+        "value": "100.0",
+        "bestValue": true
+      },
+      {
+        "metric": "test_errors",
+        "value": "0",
+        "bestValue": true
+      }
+    ]
+  },
+      {
+    "id": "AZCh9dge5bzIcQ7rq-3L",
+    "key": "fga-eps-mds_2024.1-MeasureSoftGram-Action:src/github/github-comment.ts",
+    "name": "github-comment.ts",
+    "qualifier": "FIL",
+    "path": "src/github/github-comment.ts",
+    "language": "ts",
+    "measures": [
+      {
+        "metric": "comment_lines_density",
+        "value": "5.7",
+        "bestValue": false
+      },
+      {
+        "metric": "complexity",
+        "value": "6"
+      },
+      {
+        "metric": "coverage",
+        "value": "100.0",
+        "bestValue": true
+      },
+      {
+        "metric": "files",
+        "value": "1"
+      },
+      {
+        "metric": "functions",
+        "value": "4"
+      },
+      {
+        "metric": "ncloc",
+        "value": "50"
+      },
+      {
+        "metric": "reliability_rating",
+        "value": "1.0",
+        "bestValue": true
+      },
+      {
+        "metric": "security_rating",
+        "value": "1.0",
+        "bestValue": true
+      },
+      {
+        "metric": "duplicated_lines_density",
+        "value": "0.0",
+        "bestValue": true
+      },
+      {
+        "metric": "test_failures",
+        "value": "0",
+        "bestValue": true
+      },
+      {
+        "metric": "test_success_density",
+        "value": "100.0",
+        "bestValue": true
+      },
+      {
+        "metric": "test_errors",
+        "value": "0",
+        "bestValue": true
+      }
+    ]
+  }
+]
+}, 
+
+  "github": {
+      "metrics": [
+          {"name": "total_issues", "value": 2}, 
+          {"name": "resolved_issues", "value": 1}
+      ]
+  }
+}

@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import { getInfo, Info } from '../src/utils';
+import { getGitHubInfo, getInfo, GitHubInfo, Info } from '../src/utils';
 
 jest.mock('@actions/core');
 
@@ -32,6 +32,40 @@ describe('getInfo', () => {
 
     expect(getInfo(repo)).toEqual(expectedInfo);
   });
+
+  describe('getGitHubInfo', () => {
+    const mockedCore = core as jest.Mocked<typeof core>;
+  
+    beforeEach(() => {
+      // Clear all instances and calls to mocked functions:
+      mockedCore.getInput.mockClear();
+    });
+  
+    test('should return correct GitHub Info object', () => {
+      const repo = { owner: 'testOwner', repo: 'testRepo' };
+  
+      // Mocking core.getInput calls
+      mockedCore.getInput.mockImplementation((inputName: string) => {
+        switch(inputName) {
+          case 'usLabel': return 'mockUsLabel';
+          case 'gitHubToken': return 'mockGithubToken';
+          case 'sonarToken': return 'mockToken';
+          default: return '';
+        }
+      });
+    
+      const expectedInfo: GitHubInfo = {
+        owner: 'testOwner', 
+        repo: 'testRepo',
+        label: 'mockUsLabel',
+        token: 'mockGithubToken',
+        beginDate: '2024-07-22T00:00:00-03:00', 
+
+      };
+  
+      expect(getGitHubInfo(repo, "2024-07-22T00:00:00-03:00")).toEqual(expectedInfo);
+    });
+  }); 
 
   test('should use default sonarProjectKey if not provided', () => {
     const repo = { owner: 'testOwner', repo: 'testRepo' };

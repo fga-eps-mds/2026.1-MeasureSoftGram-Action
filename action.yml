@@ -1,4 +1,4 @@
-name: '2023.2 Action MeasureSoftGram'
+name: '2024.1 Action MeasureSoftGram'
 description: 'Use the product MeasureSoftGram and show the results in the pull requests.'
 inputs:
   host:
@@ -14,12 +14,24 @@ inputs:
   githubToken:
     description: "Github token. https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret"
     required: true
+  usLabel: 
+    description: "Label to User Story"
+    required: false
   productName:
     description: "Product name"
     required: true
   msgramServiceToken:
     required: true
     description: "Token to access the MeasureSoftGram service"
+  workflowName:
+    required: false
+    description: "Release build workflow name to collect CI feedback metric"
+  collectSonarqubeMetrics:
+    required: true
+    description: "Flag to determine if Sonarqube metrics should be collected"
+  collectGithubMetrics:
+    required: true
+    description: "Flag to determine if Github metrics should be collected"
 runs:
   using: 'node16'
   main: 'dist/index.js'

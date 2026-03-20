@@ -1,6 +1,6 @@
 import { RequestService } from '../src/service/request-service';
 import Service from '../src/service/service';
-import { bodyCalculateCharacteristicsResponse, bodyCalculateMeasuresResponse, bodyCalculateTSQMIResponse, bodyCalculateSubcharacteristicsResponse, bodyListOrganizationsResponse, bodyListProductsResponse, bodyListReleaseResponse, bodyListRepositoriesResponse, bodySonarCloudResponseMetrics } from './test-data/api-response';
+import { bodyListOrganizationsResponse, bodyListProductsResponse, bodyListReleaseResponse, bodyListRepositoriesResponse, bodySonarCloudResponseMetrics, githubMetricsAPIResponse, calculatedMathModelResponse, bodyCalculateMathModelRequest } from './test-data/api-response';
 
 describe('Create message Tests', () => {
     const owner = 'fga-eps-mds';
@@ -13,10 +13,11 @@ describe('Create message Tests', () => {
     const repositoryId = 1;
     const productName = 'MeasureSoftGram'
     const metrics = bodySonarCloudResponseMetrics;
+    const githubMetrics = githubMetricsAPIResponse;
 
     beforeEach(() => {
         requestService = new RequestService();
-        service = new Service(repositoryName, owner, productName, metrics, currentDate);
+        service = new Service(repositoryName, owner, productName, currentDate);
         jest.resetAllMocks();
     });
 
@@ -35,82 +36,43 @@ describe('Create message Tests', () => {
     });
 
     test('should not throw an error if there is an ongoing release', async () => {
-        const listReleases = bodyListReleaseResponse;
+        requestService.listReleases = jest.fn().mockResolvedValue(bodyListReleaseResponse);
+        requestService.listOrganizations = jest.fn().mockResolvedValue(bodyListOrganizationsResponse);
+        requestService.listProducts = jest.fn().mockResolvedValue(bodyListProductsResponse);
+        requestService.listRepositories = jest.fn().mockResolvedValue(bodyListRepositoriesResponse);
 
-
-        await expect(service.checkReleaseExists(listReleases)).resolves.not.toThrowError();
+        await expect(service.checkReleaseExists(requestService)).resolves.not.toThrowError();
     });
 
     test('should throw an error if there is no ongoing release', async () => {
         const nextMonth = new Date('2023-07-19T00:00:00-04:00');
+        requestService.listReleases = jest.fn().mockResolvedValue(bodyListReleaseResponse);
+        requestService.listOrganizations = jest.fn().mockResolvedValue(bodyListOrganizationsResponse);
+        requestService.listProducts = jest.fn().mockResolvedValue(bodyListProductsResponse);
+        requestService.listRepositories = jest.fn().mockResolvedValue(bodyListRepositoriesResponse);
 
-        const service = new Service(repositoryName, owner, 'productName', metrics, nextMonth);
-        const listReleases = bodyListReleaseResponse;
+        const service = new Service(repositoryName, owner, 'MeasureSoftGram2', nextMonth);
 
-        await expect(service.checkReleaseExists(listReleases)).rejects.toThrowError("No release is happening on 2023-07-19.");
+        await expect(service.checkReleaseExists(requestService)).rejects.toThrowError("No release is happening on 2023-07-19.");
     });
 
     it('should return the correct result when running the function to create metrics ', async () => {
-        requestService.insertMetrics = jest.fn();
-        requestService.calculateMeasures = jest.fn().mockResolvedValue(bodyCalculateMeasuresResponse);
-        requestService.calculateCharacteristics = jest.fn().mockResolvedValue(bodyCalculateCharacteristicsResponse);
-        requestService.calculateSubCharacteristics = jest.fn().mockResolvedValue(bodyCalculateSubcharacteristicsResponse);
-        requestService.calculateTSQMI = jest.fn().mockResolvedValue(bodyCalculateTSQMIResponse);
+        const service = new Service(repositoryName, owner, productName,currentDate);
+        requestService.calculateMathModel = jest.fn().mockResolvedValue(calculatedMathModelResponse);
+        const result = await service.createMetrics(requestService, metrics, githubMetrics, orgId, productId, repositoryId);
 
-        const result = await service.createMetrics(requestService, metrics, orgId, productId, repositoryId);
-
-        expect(requestService.insertMetrics).toHaveBeenCalledWith(
-            JSON.stringify(metrics),
-            orgId,
-            productId,
-            repositoryId
-        );
-        expect(requestService.calculateMeasures).toHaveBeenCalledWith(orgId, productId, repositoryId);
-        expect(requestService.calculateCharacteristics).toHaveBeenCalledWith(orgId, productId, repositoryId);
-        expect(requestService.calculateSubCharacteristics).toHaveBeenCalledWith(orgId, productId, repositoryId);
-        expect(requestService.calculateTSQMI).toHaveBeenCalledWith(orgId, productId, repositoryId);
-
-        expect(result).toEqual({
-            data_characteristics: bodyCalculateCharacteristicsResponse,
-            data_tsqmi: bodyCalculateTSQMIResponse
-        });
+        expect(result).toEqual(calculatedMathModelResponse);
     });
 
     it('should return the correct result when running the function to calculate result', async () => {
-        requestService.insertMetrics = jest.fn();
-        requestService.calculateMeasures = jest.fn().mockResolvedValue(bodyCalculateMeasuresResponse);
-        requestService.calculateCharacteristics = jest.fn().mockResolvedValue(bodyCalculateCharacteristicsResponse);
-        requestService.calculateSubCharacteristics = jest.fn().mockResolvedValue(bodyCalculateSubcharacteristicsResponse);
-        requestService.calculateTSQMI = jest.fn().mockResolvedValue(bodyCalculateTSQMIResponse);
+        requestService.calculateMathModel = jest.fn().mockResolvedValue(calculatedMathModelResponse);
         requestService.listOrganizations = jest.fn().mockResolvedValue(bodyListOrganizationsResponse);
         requestService.listProducts = jest.fn().mockResolvedValue(bodyListProductsResponse);
         requestService.listRepositories = jest.fn().mockResolvedValue(bodyListRepositoriesResponse);
         requestService.listReleases = jest.fn().mockResolvedValue(bodyListReleaseResponse);
 
-        const result = await service.calculateResults(requestService);
+        const result = await service.calculateResults(requestService, metrics, githubMetrics, orgId, productId, repositoryId);
 
-        expect(requestService.listOrganizations).toHaveBeenCalled();
-        expect(requestService.listProducts).toHaveBeenCalled();
-        expect(requestService.listRepositories).toHaveBeenCalled();
-        expect(requestService.listReleases).toHaveBeenCalled();
-
-        expect(result).toEqual([
-            {
-                "characteristics": [
-                    {
-                        "key": "reliability",
-                        "value": 0.9254618113429579
-                    }
-                ],
-                "measures": [],
-                "repository": [],
-                "tsqmi": [
-                    { 
-                        "key": "tsqmi", 
-                        "value": 0.8359399436161667 
-                    }], 
-                    "subcharacteristics": [], 
-                    "version": []
-            }]);
+        expect(result).toEqual(calculatedMathModelResponse);
     });
 });

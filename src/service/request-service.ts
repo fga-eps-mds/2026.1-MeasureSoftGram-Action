@@ -1,4 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
+import Sonarqube from "../sonarqube";
+import { CalculatedMsgram } from "./service";
 
 export interface Organization {
     id: number;
@@ -51,8 +53,8 @@ export interface ResponseListReleases {
     id: number;
     release_name: string;
     start_at: string;
-    created_by: number;
     end_at: string;
+    created_by: number;
 }
 
 
@@ -65,41 +67,23 @@ export interface ResponseListOrganizations {
 
 export interface ResponseCalculateCharacteristics {
     id: number;
-    key: string;
-    name: string;
-    description: string;
-    latest: {
-        id: number;
-        value: number;
-        created_at: string;
-        characteristic_id: number;
-    }
+    value: number;
+    created_at: string;
+    characteristic_id: number;
 }
 
 export interface ResponseCalculateSubcharacteristics {
     id: number;
-    key: string;
-    name: string;
-    description: string;
-    latest: {
-        id: number;
-        value: number;
-        created_at: string;
-        subcharacteristic_id: number;
-    }
+    value: number;
+    created_at: string;
+    subcharacteristic_id: number;
 }
 
-export interface ResponseCalculateMeasures {
+export interface ResponseCollectedMetrics {
     id: number;
-    key: string;
-    name: string;
-    description: string;
-    latest: {
-        id: number;
-        value: number;
-        created_at: string;
-        measure_id: number;
-    }
+    value: number;
+    created_at: string;
+    metric_id: number;
 }
 
 export interface ResponseCalculateTSQMI {
@@ -108,8 +92,16 @@ export interface ResponseCalculateTSQMI {
     created_at: string;
 }
 
+export interface ResponseCalculateMathModel {
+    metrics: ResponseCollectedMetrics[];
+    measures: ResponseCalculateMathModel[];
+    subcharacteristics: ResponseCalculateSubcharacteristics; 
+    characteristics: ResponseCalculateCharacteristics; 
+    tsqmi: ResponseCalculateTSQMI[]
+}
+
 export class RequestService {
-    private MSGRAM_SERVICE_HOST = 'https://measuresoftgram-service-2023-2-0b266df334ad.herokuapp.com';
+    private MSGRAM_SERVICE_HOST = 'https://epsmsg.shop';
     private MSG_TOKEN = "'secret';"
     private baseUrl = `${this.MSGRAM_SERVICE_HOST}/api/v1/`;
 
@@ -150,19 +142,18 @@ export class RequestService {
                 console.error('An unexpected error occurred.');
             }
         }
-
-        if (response?.data) {
-            console.log(`Data received. Status code: ${response.status}`);
-            return response;
-        } else {
-            throw new Error('No data received from the API.');
-        }
+        return response; 
     }
 
     public async listOrganizations(): Promise<ResponseListOrganizations> {
         const url = `${this.baseUrl}organizations/`;
         const response =  await this.makeRequest('get', url);
-        return response?.data;
+        if (response?.data) {
+            console.log(`Data received. Status code: ${response.status}`);
+            return response?.data;
+        } else {
+            throw new Error('No data received from the API.');
+        }
     }
 
     public async listProducts(orgId: number): Promise<ResponseListProducts> {
@@ -174,49 +165,33 @@ export class RequestService {
     public async listRepositories(orgId: number, productId: number): Promise<ResponseListRepositories> {
         const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/repositories/`;
         const response = await this.makeRequest('get', url);
+        console.log(`Data received. Status code: ${response?.status}`);
         return response?.data;
+
     }
 
     public async listReleases(orgId: number, productId: number): Promise<ResponseListReleases[]> {
-        const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/release/`;    
+        const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/release`;    
         const response =  await this.makeRequest('get', url);
-        return response?.data;
-    }
-    
-
-    public async insertMetrics(metrics: string, orgId: number, productId: number, repoId: number): Promise<undefined> {
-        const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/repositories/${repoId}/collectors/sonarqube/`;
-        const jsonData = JSON.parse(metrics);
-        const response = await this.makeRequest('post', url, jsonData);
-        return response?.data;
+        console.log(`Data received. Status code: ${response?.status}`);
+        return response?.data.results;
     }
 
-    public async calculateMeasures(orgId: number, productId: number, repoId: number): Promise<ResponseCalculateMeasures[]> {
-        const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/repositories/${repoId}/calculate/measures/`;
-        const data = { measures: [ { key: "passed_tests" }, { key: "test_builds" }, { key: "test_coverage" }, { key: "non_complex_file_density" }, { key: "commented_file_density" }, { key: "duplication_absense" } ] };
-        const response = await this.makeRequest('post', url, data);
-        return response?.data;
+    public async getCurrentPreConfig(orgId: number, productId: number) {
+        const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/current/release-config`
+        const response = await this.makeRequest('get', url); 
+        console.log(`Data received. Status code: ${response?.status}`);
+        return response?.data?.data;
     }
 
-    public async calculateCharacteristics(orgId: number, productId: number, repoId: number): Promise<ResponseCalculateCharacteristics[]> {
-        const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/repositories/${repoId}/calculate/characteristics/`;
-        const data = { characteristics: [ { key: "reliability" }, { key: "maintainability" } ] };
-        const response = await this.makeRequest('post', url, data);
-        return response?.data;
-    }
-    
-
-    public async calculateSubCharacteristics(orgId: number, productId: number, repoId: number): Promise<ResponseCalculateSubcharacteristics[]> {
-        const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/repositories/${repoId}/calculate/subcharacteristics/`;
-        const data = { subcharacteristics: [ { key: "modifiability" }, { key: "testing_status" } ] };
-        const response = await this.makeRequest('post', url, data);
-        return response?.data;
-    }
-    
-
-    public async calculateTSQMI(orgId: number, productId: number, repoId: number): Promise<ResponseCalculateTSQMI> {
-        const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/repositories/${repoId}/calculate/tsqmi/`;
-        const response = await this.makeRequest('post', url);
-        return response?.data;
+    public async calculateMathModel(metrics: object, orgId: number, productId: number, repoId: number): Promise<CalculatedMsgram[]> {
+        const url = `${this.baseUrl}organizations/${orgId}/products/${productId}/repositories/${repoId}/calculate/math-model/`;
+        const response = await this.makeRequest('post', url, metrics);
+        if (response?.status == 201 && response.data) {
+            console.log(`Data received. Status code: ${response?.status}`);
+            return response?.data;
+        } else {
+            throw new Error('The data was not calculated properly .');
+        }
     }
 }

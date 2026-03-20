@@ -27,6 +27,7 @@ export default class GithubComment {
         return message;
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public async createOrUpdateComment(pullRequestNumber: number, message: string, octokit: any) {
         // Check if a comment already exists on the pull request
         const { data: comments } = await octokit.rest.issues.listComments({

@@ -1,5 +1,6 @@
-import { Organization, Product, Repository, RequestService, ResponseCalculateCharacteristics, ResponseListReleases } from "./request-service";
+import { Organization, Product, Repository, RequestService, ResponseListReleases } from "./request-service";
 import { MetricsResponseAPI } from '../sonarqube';
+import { GithubMetricsResponse } from "../github";
 
 export interface CalculatedMsgram {
     repository: { key: string; value: string }[];
@@ -10,19 +11,22 @@ export interface CalculatedMsgram {
     tsqmi: { key: string; value: number }[];
 }
 
+interface MathModelRequest {
+    github: GithubMetricsResponse, 
+    sonarqube: MetricsResponseAPI
+}
+
 export default class Service {
     private repo: string;
     private owner: string;
     private currentDate: Date;
     private productName: string;
-    private metrics: MetricsResponseAPI;
 
-    constructor(repo: string, owner: string, productName: string, metrics: MetricsResponseAPI, currentDate: Date) {
+    constructor(repo: string, owner: string, productName: string, currentDate: Date) {
         this.repo = repo;
         this.owner = owner;
         this.currentDate = currentDate;
         this.productName = productName;
-        this.metrics = metrics;
     }
 
     private logRepoInfo() {
@@ -47,13 +51,27 @@ export default class Service {
         }
     }
 
-    public async checkReleaseExists(listReleases: Array<ResponseListReleases>): Promise<void> {
+    public async checkReleaseExists(requestService: RequestService): Promise<{startAt: string, orgId: number, productId: number, repositoryId: number}> {
+        const listOrganizations = await requestService.listOrganizations();
+        const orgId: number = await this.checkEntityExists(listOrganizations.results, this.owner);
+        console.log('orgId ', orgId);
+    
+        const listProducts = await requestService.listProducts(orgId);
+        const productId: number = await this.checkEntityExists(listProducts.results, this.productName);
+        console.log('productId ', productId)
+        
+        const listRepositories = await requestService.listRepositories(orgId, productId);
+        const repositoryId: number = await this.checkEntityExists(listRepositories.results, this.repo);
+    
+        const listReleases: Array<ResponseListReleases> = await requestService.listReleases(orgId, productId);
         const currentDateStr = this.currentDate.toISOString().split('T')[0];
 
         let releaseId = null;
-
+        let startAt = ""; 
+        let responseStart = ""; 
         for (const release of listReleases) {
-            const startAt = release.start_at.split('T')[0];
+            responseStart = release.start_at; 
+            startAt = release.start_at.split('T')[0];
             const endAt = release.end_at.split('T')[0];
 
             if (currentDateStr >= startAt && currentDateStr <= endAt) {
@@ -67,67 +85,30 @@ export default class Service {
         } else {
             console.log(`Release with id ${releaseId} is happening on ${currentDateStr}.`);
         }
+        return {startAt: responseStart, orgId: orgId, productId: productId, repositoryId: repositoryId}
     }
 
-    public async createMetrics(requestService: RequestService, metrics: MetricsResponseAPI, orgId: number, productId: number, repositoryId: number) {
-        const string_metrics = JSON.stringify(metrics);
+    public async createMetrics(requestService: RequestService, sonarMetrics: MetricsResponseAPI | null, githubMetrics: GithubMetricsResponse | null, orgId: number, productId: number, repositoryId: number) {
+        const metrics = {} as MathModelRequest
         console.log('Calculating metrics, measures, characteristics and subcharacteristics');
+        if(sonarMetrics) {
+            metrics.sonarqube = sonarMetrics; 
+        }
+        
+        if(githubMetrics) {
+            metrics.github = githubMetrics;
+        }
+         
+        const calculatedResponse = await requestService.calculateMathModel(metrics, orgId, productId, repositoryId);
 
-        await requestService.insertMetrics(string_metrics, orgId, productId, repositoryId);
-        const data_measures = await requestService.calculateMeasures(orgId, productId, repositoryId);
-        console.log('Calculated measures: \n', data_measures);
-
-        const data_characteristics = await requestService.calculateCharacteristics(orgId, productId, repositoryId);
-        console.log('Calculated characteristics: \n', data_characteristics);
-
-        const data_subcharacteristics = await requestService.calculateSubCharacteristics(orgId, productId, repositoryId);
-        console.log('Calculated subcharacteristics: \n', data_subcharacteristics);
-
-        const data_tsqmi = await requestService.calculateTSQMI(orgId, productId, repositoryId);
-        console.log('TSQMI: \n', data_tsqmi);
-
-        return { data_characteristics, data_tsqmi };
+        return calculatedResponse; 
     }
 
-    public async calculateResults(requestService: RequestService) {
+    public async calculateResults(requestService: RequestService, metrics: MetricsResponseAPI | null, githubMetrics: GithubMetricsResponse | null, orgId: number, productId: number, repositoryId: number) {
         this.logRepoInfo();
-        const listOrganizations = await requestService.listOrganizations();
-        const orgId: number = await this.checkEntityExists(listOrganizations.results, this.owner);
-        console.log('orgId ', orgId);
+        const result = await this.createMetrics(requestService, metrics, githubMetrics, orgId, productId, repositoryId);
 
-        const listProducts = await requestService.listProducts(orgId);
-        const productId: number = await this.checkEntityExists(listProducts.results, this.productName);
-        console.log('productId ', productId)
-        
-        const listRepositories = await requestService.listRepositories(orgId, productId);
-        const repositoryId: number = await this.checkEntityExists(listRepositories.results, this.repo);
-
-        const listReleases = await requestService.listReleases(orgId, productId);
-        await this.checkReleaseExists(listReleases);
-        const { data_characteristics, data_tsqmi } = await this.createMetrics(requestService, this.metrics, orgId, productId, repositoryId);
-
-        const characteristics = data_characteristics.map((data: ResponseCalculateCharacteristics) => {
-            return {
-                key: data.key,
-                value: data.latest.value
-            };
-        });
-
-        const tsqmi = [{
-            key: 'tsqmi',
-            value: data_tsqmi.value
-        }];
-
-        const result: Array<CalculatedMsgram> = [{
-            repository: [],
-            version: [],
-            measures: [],
-            subcharacteristics: [],
-            characteristics: characteristics,
-            tsqmi: tsqmi
-        }];
-
-        console.log('Result: \n', JSON.stringify(result));
+        console.log('Calculation of the MeasureSoftGram mathematical model completed successfully. Check the web application to see the data');
         return result;
     }
 }

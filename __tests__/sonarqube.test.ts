@@ -183,7 +183,7 @@ describe('Sonarqube', () => {
   
     const sonarqube = new Sonarqube(info);
     const pageSize = 500;
-    await expect(sonarqube.getMeasures({ pageSize, pullRequestNumber: null })).rejects.toThrow('Error getting project measures from SonarQube. Please make sure you provided the host and token inputs.');
+    await expect(sonarqube.getMeasures({ pageSize, pullRequestNumber: 3 })).rejects.toThrow('Error getting project measures from SonarQube. Please make sure you provided the host and token inputs.');
   });
   
 });
