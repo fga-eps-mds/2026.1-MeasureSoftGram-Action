@@ -15,9 +15,9 @@ jobs:
         uses: ./
         id: msgram
         with:
-          githubToken: ${{ secrets.API_TOKEN_DOC }} # Token do GitHub
-          sonarProjectKey: "" # (opcional) Chave do projeto no SonarQube
-          msgramServiceToken: ${{ secrets.MSGRAMSERVICETOKEN }} # Token para acessar o serviço MeasureSoftGram
+          githubToken: ${{ secrets.GITHUB_TOKEN }} # Token do GitHub
+          sonarProjectKey: ${{ secrets.SONAR_TOKEN }} # (opcional) Chave do projeto no SonarQube
+          msgramServiceToken: ${{ secrets.MSGRAM_TOKEN }} # Token para acessar o serviço MeasureSoftGram
           productName: "MeasureSoftGram" # Nome do produto
           workflowName: 'Build' # Nome do seu worflow que realiza a build da release
           collectSonarqubeMetrics: true # Flag que determina se métricas do Sonarqube serão persistidas
