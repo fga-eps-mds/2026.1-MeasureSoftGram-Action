@@ -1,5 +1,4 @@
 FROM ubuntu:24.04
-LABEL authors="jss"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
