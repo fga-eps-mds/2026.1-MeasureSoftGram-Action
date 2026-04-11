@@ -1,0 +1,38 @@
+volumes:
+  service_postgres_data:
+
+services:
+  db:
+    container_name: msgram-postgres
+    image: postgres:18-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - service_postgres_data:/var/lib/postgresql
+    env_file:
+      - ./env-vars/.postgres.env
+
+  service:
+    container_name: msgram-service
+    image: joaoseisei1/msgram-service:1.0
+    command: [ "./start_service.sh" ]
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./env-vars/.service.env
+      - ./env-vars/.postgres.env
+
+  action:
+    container_name: msgram-action
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/workspace
+    env_file:
+      - ./env-vars/.service.env
+      - ./env-vars/.action.env
+    depends_on:
+      - service
+
