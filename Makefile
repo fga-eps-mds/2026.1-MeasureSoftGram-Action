@@ -1,24 +1,24 @@
 update-dist:
-	npm install
+	npm ci
 	npm run build
 
-build:
+build: update-dist
 	docker compose up --build
 
-msgram:
+down:
+	docker compose down
+
+action-msgram:
 	docker exec -it msgram-action act workflow_dispatch \
 		-j msgram_job \
 		-W .github/workflows/msgram.yml \
 		--secret-file /workspace/env-vars/.action.env
 
-test:
+action-test:
 	docker exec -it msgram-action act -j pipeline -W .github/workflows/linter.yml
 
-down:
-	docker compose down msgram-action
-
-metrics:
+action-metrics:
 	docker exec -it msgram-action act -j release -W .github/workflows/metrics.yml
 
-linter:
+action-linter:
 	docker exec -it msgram-action act -j ESLint -W .github/workflows/linter.yml
