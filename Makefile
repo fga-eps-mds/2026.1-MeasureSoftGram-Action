@@ -1,5 +1,5 @@
 update-dist:
-	npm ci
+	npm install
 	npm run build
 
 build: update-dist
