@@ -22,9 +22,3 @@ action-metrics:
 
 action-linter:
 	docker exec -it msgram-action act -j ESLint -W .github/workflows/linter.yml
-
-action-docker-publish:
-	docker exec -it msgram-action act pull_request \
-		-j build-and-push \
-		-W .github/workflows/docker-publish.yml \
-		--secret-file /workspace/env-vars/.action.env
