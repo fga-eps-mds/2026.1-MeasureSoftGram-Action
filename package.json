@@ -1,5 +1,5 @@
 {
-  "name": "2023-1-measuresoftgram-action",
+  "name": "measuresoftgram-action",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fga-eps-mds/2023-1-MeasureSoftGram-Action.git"
+    "url": "git+https://github.com/fga-eps-mds/MeasureSoftGram-Action.git"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/fga-eps-mds/2023-1-MeasureSoftGram-Action/issues"
+    "url": "https://github.com/fga-eps-mds/MeasureSoftGram-Action/issues"
   },
-  "homepage": "https://github.com/fga-eps-mds/2023-1-MeasureSoftGram-Action#readme",
+  "homepage": "https://github.com/fga-eps-mds/MeasureSoftGram-Action#readme",
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
