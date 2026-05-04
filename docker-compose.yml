@@ -14,7 +14,7 @@ services:
 
   service:
     container_name: msgram-service
-    image: joaoseisei1/msgram-service:1.0
+    image: 2026measuresoftgram/measuresoftgram-service:latest
     command: [ "./start_service.sh" ]
     ports:
       - "8080:8080"
