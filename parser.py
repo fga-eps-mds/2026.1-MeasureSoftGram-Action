@@ -32,7 +32,7 @@ def save_sonar_metrics(tag):
 
     print("Extração do Sonar concluída.")
 
-    file_path = f'./Analytics/data/fga-eps-mds-{REPO}-{TODAY.strftime("%m-%d-%Y-%H-%M-%S")}-{tag}.json'
+    file_path = f'./analytics-raw-data/fga-eps-mds-{REPO}-{TODAY.strftime("%m-%d-%Y-%H-%M-%S")}-{tag}.json'
 
     with open(file_path, 'w') as fp:
         fp.write(json.dumps(j))
@@ -69,7 +69,7 @@ def save_github_metrics_runs():
 
     print("Quantidade de workflow_runs: " + str(len(data["workflow_runs"])))
 
-    file_path = f'./Analytics/data/GitHub_API-Runs-fga-eps-mds-{REPO}-{TODAY.strftime("%m-%d-%Y-%H-%M-%S")}.json'
+    file_path = f'./analytics-raw-data/GitHub_API-Runs-fga-eps-mds-{REPO}-{TODAY.strftime("%m-%d-%Y-%H-%M-%S")}.json'
 
     # Salva os dados em um json file
     with open(file_path, 'w') as fp:
@@ -96,7 +96,7 @@ def save_github_metrics_issues():
 
     print("Quantidade total de issues: " + str(len(issues)))
 
-    file_path = f'./Analytics/data/GitHub_API-Issues-fga-eps-mds-{REPO}.json'
+    file_path = f'./analytics-raw-data/GitHub_API-Issues-fga-eps-mds-{REPO}.json'
 
     # Salvar todas as issues em um arquivo JSON
     with open(file_path, 'w') as fp:
