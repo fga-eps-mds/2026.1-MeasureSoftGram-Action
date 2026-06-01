@@ -1,4 +1,4 @@
-name: '2024.1 Action MeasureSoftGram'
+name: '2026.1 Action MeasureSoftGram'
 description: 'Use the product MeasureSoftGram and show the results in the pull requests.'
 inputs:
   host:
