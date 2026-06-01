@@ -5,8 +5,6 @@ services:
   db:
     container_name: msgram-postgres
     image: postgres:18-alpine
-    ports:
-      - "5432:5432"
     volumes:
       - service_postgres_data:/var/lib/postgresql
     env_file:
