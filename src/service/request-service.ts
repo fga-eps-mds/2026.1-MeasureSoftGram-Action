@@ -126,9 +126,8 @@ export class RequestService {
       method,
       url,
       data,
+      timeout: 50000,
     };
-
-    axios.defaults.timeout = 50000; // await for heroku to wake up
 
     let response: AxiosResponse | null = null;
     try {
