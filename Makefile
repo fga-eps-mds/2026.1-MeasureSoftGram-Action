@@ -1,3 +1,9 @@
+test:
+	yarn test
+
+lint:
+	yarn lint
+
 update-dist:
 	npm install
 	npm run build
