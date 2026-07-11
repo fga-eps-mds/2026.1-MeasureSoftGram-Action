@@ -72,3 +72,20 @@ Lembre-se que é necessário que você disponha do seu token do GitHub para exec
 Os resultados são adicionados ao website do MeasureSoftwareGram e exibidos nesse gráfico:
 
 ![Resultado Web](./assets/images/resultado_msgram.png)
+## Desenvolvimento local
+
+O gerenciador de pacotes padrão deste repositório é o **Yarn** (o `yarn.lock` é o
+lockfile versionado). Use Yarn em todos os passos para evitar divergência de
+dependências.
+
+```bash
+yarn install --frozen-lockfile
+yarn lint            # ESLint + Prettier
+yarn test            # roda a suíte uma vez, com cobertura
+yarn build           # compila src/ para dist/ com o ncc
+```
+
+> **Importante:** a Action é executada a partir do código já compilado em
+> `dist/index.js`, então o `dist/` **precisa ser versionado**. Sempre que alterar
+> algo em `src/`, rode `yarn build` e faça commit do `dist/` atualizado junto com
+> a mudança. O alvo `make update-dist` faz `yarn install` + `yarn build` de uma vez.

@@ -19,8 +19,8 @@ jobs:
           node-version: 18.x
       
       - name: Instalar dependências
-        run: npm install
+        run: yarn install --frozen-lockfile
 
       - name: Rodar ESLint + Prettier
-        run: npm run lint
+        run: yarn lint
 
