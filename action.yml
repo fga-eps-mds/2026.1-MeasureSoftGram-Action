@@ -33,5 +33,5 @@ inputs:
     required: true
     description: "Flag to determine if Github metrics should be collected"
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
