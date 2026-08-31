@@ -1,5 +1,6 @@
 # MeasureSoftGram Action
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fga-eps-mds_MeasureSoftGram-Action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=fga-eps-mds_MeasureSoftGram-Action) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fga-eps-mds_MeasureSoftGram-Action&metric=coverage)](https://sonarcloud.io/summary/new_code?id=fga-eps-mds_MeasureSoftGram-Action) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=fga-eps-mds_MeasureSoftGram-Action&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=fga-eps-mds_MeasureSoftGram-Action) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=fga-eps-mds_MeasureSoftGram-Action&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=fga-eps-mds_MeasureSoftGram-Action) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fga-eps-mds_MeasureSoftGram-Action&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=fga-eps-mds_MeasureSoftGram-Action) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=fga-eps-mds_MeasureSoftGram-Action&metric=bugs)](https://sonarcloud.io/summary/new_code?id=fga-eps-mds_MeasureSoftGram-Action) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=fga-eps-mds_MeasureSoftGram-Action&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=fga-eps-mds_MeasureSoftGram-Action)
 
 ## Action do GitHub para Análise de Código com MeasureSoftGram
 
@@ -8,6 +9,17 @@ Use essa action do GitHub para realizar uma análise de código com o MeasureSof
 <img src="./assets/images/MeasureSoftwareGram.png">
 
 O MeasureSoftGram é uma ferramenta robusta para gestão e avaliação de qualidade de software. Ele suporta múltiplos atributos de qualidade e retorna métricas analisadas de software com base em modelos algébricos. O MeasureSoftGram é completamente gratuito para projetos open-source.
+
+## Documentação
+
+- [Documentação do componente](https://fga-eps-mds.github.io/MeasureSoftGram-Docs/docs/componente-action/)
+  - Arquitetura e funcionamento do componente
+  - Configuração e execução
+  - Informações técnicas específicas
+- [Documentação oficial do MeasureSoftGram](https://fga-eps-mds.github.io/MeasureSoftGram-Docs/)
+  - Visão geral do produto
+  - Arquitetura geral
+  - Documentação dos componentes
 
 ## Pré-requisitos
 
@@ -89,3 +101,15 @@ yarn build           # compila src/ para dist/ com o ncc
 > `dist/index.js`, então o `dist/` **precisa ser versionado**. Sempre que alterar
 > algo em `src/`, rode `yarn build` e faça commit do `dist/` atualizado junto com
 > a mudança. O alvo `make update-dist` faz `yarn install` + `yarn build` de uma vez.
+
+## Contribuição
+
+Consulte o [Guia de Contribuição](./CONTRIBUTING.md) antes de realizar alterações no projeto.
+
+## Código de Conduta
+
+Este projeto segue o [Código de Conduta](./code_of_conduct.md).
+
+## Licença
+
+Este projeto é distribuído sob a licença [AGPL-3.0](./LICENSE).
